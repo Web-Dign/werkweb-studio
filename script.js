@@ -1,8 +1,0 @@
-// Demo configuration: keep blank until a real inbox is authorized for enquiries.
-const CONFIG = { inquiryEmail: '' };
-const menuBtn=document.getElementById('menuBtn');const menu=document.getElementById('menu');
-menuBtn?.addEventListener('click',()=>{const open=menu.classList.toggle('open');menuBtn.setAttribute('aria-expanded',String(open));menuBtn.setAttribute('aria-label',open?'Menü schließen':'Menü öffnen');});
-menu?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('open');menuBtn?.setAttribute('aria-expanded','false');}));
-document.getElementById('year').textContent=new Date().getFullYear();
-const form=document.getElementById('contactForm');const result=document.getElementById('formResult');
-form?.addEventListener('submit',e=>{e.preventDefault();result.classList.remove('error');if(!form.reportValidity()){result.textContent='Bitte alle Pflichtfelder korrekt ausfüllen.';result.classList.add('error');return;}if(!CONFIG.inquiryEmail){result.textContent='Demo-Modus: Es ist noch keine Empfängeradresse konfiguriert. Es wurden keine Daten versendet. Bitte richte vor dem Live-Betrieb eine geschäftliche E-Mail-Adresse ein.';return;}const val=id=>document.getElementById(id).value.trim();const body=`Betrieb: ${val('company')}\nKontakt: ${val('person')}\nE-Mail: ${val('email')}\nGewerk: ${val('trade')}\n\nProjektbeschreibung:\n${val('message')}`;const url=`mailto:${encodeURIComponent(CONFIG.inquiryEmail)}?subject=${encodeURIComponent('Website-Anfrage: '+val('company'))}&body=${encodeURIComponent(body)}`;window.location.href=url;result.textContent='Dein E-Mail-Programm sollte sich jetzt mit einem Entwurf öffnen. Der Versand erfolgt erst dort.';});
