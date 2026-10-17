@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>WERKWEB – Angebotsgenerator (nur Test)</title>
+<style>
+:root{font-family:system-ui,Arial;color-scheme:dark}body{margin:0;background:#091522;color:#e7f1f9}main{max-width:1100px;margin:auto;padding:30px 18px}h1{font-size:clamp(2rem,5vw,3.5rem);letter-spacing:-.045em}a{color:#bcf777}small,p{color:#a8bdc9}section{border:1px solid #31435c;background:#112237;border-radius:22px;padding:24px;margin:20px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}label{display:block;font-size:.95rem;margin:12px 0}input,textarea,select{display:block;box-sizing:border-box;width:100%;border:1px solid #40506a;border-radius:10px;background:#091522;color:white;padding:12px;margin-top:7px;font:inherit}textarea{min-height:100px}button{border:0;border-radius:999px;background:#b8f36e;color:#07101a;font-weight:800;padding:13px 23px;cursor:pointer;margin:8px 8px 8px 0}button.secondary{background:#2c4059;color:white}pre{white-space:pre-wrap;background:#06101c;border:1px solid #344660;border-radius:12px;padding:18px;overflow-wrap:anywhere}.warning{border-left:4px solid #b8f36e;padding-left:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}}</style>
+<main><a href="../index.html">← Zurück zu WERKWEB Studio</a>
+<h1>Angebotsgenerator <span style="color:#b8f36e">TEST</span></h1>
+<p class="warning">Ausschließlich fiktive Daten verwenden. Der Generator ist in einer öffentlichen GitHub-Pages-Website abgelegt. Keine echte Kundenverwaltung; keine Übermittlung an Gmail, Formspree oder andere Dienste. Preise sind interne Rechenbeispiele, keine freigegebenen Angebote.</p>
+<section><h2>1. Testbriefing</h2><div class="grid">
+<label>Fiktiver Betrieb<input id="company" value="Musterwerk Testbetrieb (fiktiv)"></label>
+<label>Fiktiver Ansprechpartner<input id="person" value="Alex Beispiel (fiktiv)"></label>
+<label>Gewerk<select id="trade"><option>Elektrik</option><option>Sanitär / Heizung</option><option>Dachdecker</option><option>Maler</option><option>Sonstiges Handwerk</option></select></label>
+<label>Design<select id="design"><option>Voltwerk – Elektro</option><option>Wasserwerk – SHK</option><option>Dachkante – Dachdecker</option><option>Farbraum° – Maler</option></select></label>
+<label>Paket<select id="package"><option>Website Starter</option><option>Website Plus</option></select></label>
+<label>Anzahl geplanter Inhaltsseiten<input type="number" id="pages" value="4" min="1" max="30"></label>
+</div><label>Projektwünsche<textarea id="message">FIKTIVER FUNKTIONSTEST: Responsive Website mit Startseite, Leistungen, Über uns und Kontakt. Kein echter Auftrag.</textarea></label></section>
+<section><h2>2. Interne Beispielkalkulation</h2><div class="grid">
+<label>Stunden<input type="number" id="hours" min="0" step=".5" value="12"></label>
+<label>Stundensatz (€)<input type="number" id="rate" min="0" step="1" value="45"></label>
+<label>Zusatzkosten (€)<input type="number" id="extra" min="0" step="1" value="30"></label>
+<label>Risikopuffer (%)<input type="number" id="buffer" min="0" max="200" value="15"></label>
+</div><p id="cost"></p></section>
+<section><h2>3. Angebotsentwurf</h2><button id="generate">Entwurf erstellen</button><button id="copy" class="secondary">Entwurf kopieren</button><button id="download" class="secondary">Als TXT herunterladen</button><pre id="result" aria-live="polite"></pre></section>
+</main>
+<script>
+const el=id=>document.getElementById(id),val=id=>el(id).value.trim();
+const euro=n=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(n);
+function generate(){
+ const hours=Number(val('hours')),rate=Number(val('rate')),extra=Number(val('extra')),buffer=Number(val('buffer'));
+ if(![hours,rate,extra,buffer].every(n=>Number.isFinite(n)&&n>=0)||buffer>200){el('result').textContent='Bitte gültige Zahlen eingeben.';return;}
+ const base=hours*rate+extra,withBuffer=base*(1+buffer/100);
+ el('cost').textContent='Arbeitsaufwand: '+euro(hours*rate)+' · Zusatzkosten: '+euro(extra)+' · Basis inkl. Puffer: '+euro(withBuffer)+' (keine vollständige Selbstkostenkalkulation)';
+ const t=`FIKTIVER TEST – INTERNER ANGEBOTSENTWURF – NICHT VERSENDEN
+
+Betreff: Unverbindlicher Website-Vorschlag für ${val('company')}
+
+Guten Tag ${val('person')},
+
+vielen Dank für Ihr Interesse an einer modernen Website für ${val('company')}. Basierend auf dem fiktiven Projektbriefing schlage ich folgenden vorläufigen Leistungsumfang vor:
+
+Paket: ${val('package')}
+Gewerk: ${val('trade')}
+Gewünschtes Design: ${val('design')}
+Voraussichtlicher Umfang: ${val('pages')} Inhaltsseiten / Bereiche
+Projektwünsche: ${val('message')}
+
+Vorgesehene Leistungen (vorbehaltlich Vereinbarung):
+- Mobiloptimierte, responsive Website
+- Strukturierte Startseite und Leistungsübersicht
+- Über-uns-Bereich und Kontaktmöglichkeiten
+- Grundlegende technische SEO-Basis
+- Technische Funktionsprüfung und vereinbarte Korrekturen
+
+Offene Rückfragen:
+- Liegen Logo, Texte und Bilder vor? Sind Nutzungsrechte geklärt?
+- Ist eine Domain vorhanden und wer betreibt das Hosting?
+- Welche konkreten Leistungsseiten und Zusatzfunktionen werden gebraucht?
+- Welche Fristen und Korrekturrunden sollen vereinbart werden?
+- Welche Rechtstexte stellt der Auftraggeber bereit?
+
+Angebotspreis: [ERST NACH PRÜFUNG EINTRAGEN]
+Umsatzsteuerstatus: [PRÜFEN]
+Projektbeginn/Abgabe: [ABSTIMMEN]
+Zahlungs- und Vertragsbedingungen: [FESTLEGEN]
+
+Mit freundlichen Grüßen
+WERKWEB Studio – Demo
+
+---
+INTERNE PRÜFNOTIZEN (NICHT AN KUNDEN SENDEN)
+Rechenbasis: ${hours} h × ${euro(rate)} = ${euro(hours*rate)}
+Zusatzkosten: ${euro(extra)}
+Puffer: ${buffer} %
+Interne Basis inkl. Puffer: ${euro(withBuffer)}
+Dies ist weder eine verbindliche Preiszusage noch eine vollständige Kalkulation. Alle Daten sind fiktiv.`;
+ el('result').textContent=t;
+}
+el('generate').onclick=generate;
+el('copy').onclick=()=>navigator.clipboard.writeText(el('result').textContent);
+el('download').onclick=()=>{const blob=new Blob([el('result').textContent],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='werkweb-testangebot.txt';a.click();URL.revokeObjectURL(a.href);};
+generate();
+</script></html>
