@@ -1,0 +1,38 @@
+name: WERKWEB Formspree Test (synthetisch)
+run-name: Fiktiver Formspree Test
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: "Nur synthetische Testdaten, kein echter Kunde"
+        required: true
+        default: "elektro"
+        type: choice
+        options:
+          - elektro
+          - shk
+          - dach
+          - maler
+permissions:
+  contents: read
+concurrency:
+  group: werkweb-synthetic-formspree
+  cancel-in-progress: false
+jobs:
+  synthetic-submit:
+    if: github.repository == 'Web-Dign/werkweb-studio'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validierung der Testszenarien
+        run: node angebotsgenerator/formspree-test.cjs --validate
+      - name: Sende genau eine ausschließlich fiktive Testanfrage
+        env:
+          TEST_SCENARIO: ${{ inputs.scenario }}
+          WERKWEB_TEST_FORMSPREE_ENDPOINT: ${{ secrets.WERKWEB_TEST_FORMSPREE_ENDPOINT }}
+          WERKWEB_ALLOW_SYNTHETIC_FORM_POST: "YES"
+        run: node angebotsgenerator/formspree-test.cjs "$TEST_SCENARIO" --send --confirm-test
