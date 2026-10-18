@@ -17,3 +17,7 @@ jobs:
           node-version: "22"
       - name: Prüfe fiktive Kalkulationen
         run: node angebotsgenerator/test-pricing.cjs
+      - name: Fiktive Formspree-Beispiele validieren (kein Versand)
+        run: node angebotsgenerator/formspree-test.cjs --validate
+      - name: Nur Vorschau erzeugen (kein Versand)
+        run: node angebotsgenerator/formspree-test.cjs shk
